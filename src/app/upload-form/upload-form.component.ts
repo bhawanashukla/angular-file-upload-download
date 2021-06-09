@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgxSpinnerService } from "ngx-spinner";
+import { HttpClient, } from "@angular/common/http";
 
 @Component({
   selector: 'app-upload-form',
@@ -12,7 +13,8 @@ export class UploadFormComponent implements OnInit {
   selectedFiles: boolean = false;
 
   constructor(private fb: FormBuilder,
-    private spinner: NgxSpinnerService) {
+    private spinner: NgxSpinnerService,
+    private http: HttpClient) {
 
     this.uploadForm = this.fb.group({
       userfile: ['', Validators.required],
@@ -20,30 +22,29 @@ export class UploadFormComponent implements OnInit {
     });
 
   }
-  ngOnInit() {
-    console.log(this.uploadForm.controls.userfile)
-  }
+  ngOnInit() {}
 
-  get userfile() {
-    return this.uploadForm.get('userfile');
-  }
-
-  upload(event: any) {
-    this.spinner.show();
+  onFileChange(event:any) {
     const reader = new FileReader();
-    console.log('upload')
-    if (event.target.files && event.target.files.length) {
-      let fileName = event.target.files[0].name;
+ 
+    if(event.target.files && event.target.files.length) {
       const [file] = event.target.files;
       reader.readAsDataURL(file);
-      console.log(event.target.files)
+  
       reader.onload = () => {
-        console.log(reader.result)
         this.uploadForm.patchValue({
-          userfile: reader.result,
-          fileName: fileName
-        });
+          userfile: reader.result
+       });
       };
     }
+  }
+
+  upload() {
+    this.spinner.show();
+    this.http.post('/api/upload', this.uploadForm.value).subscribe((res:any)=>{
+      this.spinner.hide();
+      console.log(res);
+      alert(res.msg);
+    },(err:any)=>{alert(err.msg)})
   }
 }
