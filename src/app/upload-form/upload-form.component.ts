@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
   selector: 'app-upload-form',
@@ -9,10 +10,13 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 export class UploadFormComponent implements OnInit {
   uploadForm: FormGroup;
   selectedFiles: boolean = false;
-  constructor(private fb: FormBuilder) {
+
+  constructor(private fb: FormBuilder,
+    private spinner: NgxSpinnerService) {
+
     this.uploadForm = this.fb.group({
       userfile: ['', Validators.required],
-      fileName:['']
+      fileName: ['']
     });
 
   }
@@ -24,18 +28,20 @@ export class UploadFormComponent implements OnInit {
     return this.uploadForm.get('userfile');
   }
 
-  upload(event:any) {
+  upload(event: any) {
+    this.spinner.show();
     const reader = new FileReader();
-
+    console.log('upload')
     if (event.target.files && event.target.files.length) {
       let fileName = event.target.files[0].name;
       const [file] = event.target.files;
       reader.readAsDataURL(file);
-
+      console.log(event.target.files)
       reader.onload = () => {
+        console.log(reader.result)
         this.uploadForm.patchValue({
           userfile: reader.result,
-          fileName:fileName
+          fileName: fileName
         });
       };
     }

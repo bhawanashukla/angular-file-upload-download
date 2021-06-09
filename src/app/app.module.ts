@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { UploadFormComponent } from './upload-form/upload-form.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgxSpinnerModule } from "ngx-spinner";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -14,7 +16,8 @@ import { ReactiveFormsModule } from '@angular/forms';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxSpinnerModule
   ],
   entryComponents:[UploadFormComponent],
   providers: [],
